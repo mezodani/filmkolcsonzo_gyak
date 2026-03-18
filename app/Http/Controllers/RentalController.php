@@ -40,23 +40,39 @@ class RentalController extends Controller
             "due_date" => $request->due_date
         ]);
 
-        return response()->json(["success" => true, "message" => "Rental created successfully!"],201);
+        return response()->json(["success" => true, "message" => "Rental created successfully!"], 201);
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Rental $rental)
+    public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            "due_date" => "required|date|after:tomorrow"
+        ]);
+
+        $rental = Rental::find($id);
+        if (!$rental) {
+            return response()->json(["success" => false, "message" => "Couldn't find rental with ID: " . $id], 404);
+        }
+        $rental->update([
+            "due_date" => $request->due_date
+        ]);
+        return response()->json(["success" => true, "message" => "Rental updated successfully"], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rental $rental)
+    public function destroy(string $id)
     {
-        //
+        $rental = Rental::find($id);
+        if (!$rental) {
+            return response()->json(["success" => false, "message" => "Couldn't find rental with ID: " . $id], 404);
+        }
+        $rental->delete();
+        return response()->json(["success" => true, "message" => "Rental deleted successfully"], 200);
     }
 }
