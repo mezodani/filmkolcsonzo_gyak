@@ -7,43 +7,21 @@ use Illuminate\Http\Request;
 
 class FilmController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Film::all(), 200, options: JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Film $film)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Film $film)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Film $film)
-    {
-        //
+        $validated = $request->validate([
+            "title" => "required|string|min:1|max:50",
+            "director" => "required|string|min:1|max:50",
+            "release_year" => "required|integer|min:1900|max:2026",
+            "genre" => "required|string|min:1|max:50"
+        ]);
+        Film::create($validated);
+        return response()->json(["success" => true, "message" => "Film created successfully!"], 201);
     }
 }

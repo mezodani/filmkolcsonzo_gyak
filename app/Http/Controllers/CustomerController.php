@@ -7,43 +7,21 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Customer::all(), 200, options: JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Customer $customer)
-    {
-        //
+        $validated = $request->validate([
+            "name" => "required|string|min:1|max:50",
+            "email" => "required|email|min:1|max:50",
+            "phone" => "required|string|min:1|max:15",
+            "city" => "required|string|min:1|max:50"
+        ]);
+        Customer::create($validated);
+        return response()->json(["success" => true, "message" => "Customer created successfully!"], 201);
     }
 }
